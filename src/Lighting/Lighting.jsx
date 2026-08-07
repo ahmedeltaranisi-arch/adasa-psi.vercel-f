@@ -13,7 +13,7 @@ export default function LightingArticles() {
 
   async function getProducts() {
     try {
-      const { data } = await axios.get("/public/posts.json");
+      const { data } = await axios.get("/posts.json");
       setProducts(data.posts);
     } catch (error) {
       console.log("خطأ في جلب المقالات:", error);

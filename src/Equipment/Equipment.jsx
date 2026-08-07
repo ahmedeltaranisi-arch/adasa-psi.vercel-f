@@ -25,7 +25,7 @@ export default function Equipment() {
 
   async function getProducts() {
     try {
-      const { data } = await axios.get("/public/posts.json");
+      const { data } = await axios.get("/posts.json");
       if (data && data.posts) {
         setProducts(data.posts);
       }
