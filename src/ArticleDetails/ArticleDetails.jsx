@@ -15,8 +15,6 @@ import {
   MessageCircle,
   Image as ImageIcon,
   ArrowLeft,
-  FileQuestion,
-  BookOpen,
 } from "lucide-react";
 
 export default function ArticleDetails() {
@@ -27,7 +25,7 @@ export default function ArticleDetails() {
 
   async function getArticleData() {
     try {
-      const { data } = await axios.get("/public/posts.json");
+      const { data } = await axios.get("/posts.json");
       const posts = data.posts || [];
       const found = posts.find((item) => String(item.id) === String(id));
       setArticle(found || null);
@@ -63,64 +61,16 @@ export default function ArticleDetails() {
   if (!article) {
     return (
       <div
+        className="text-center py-32 text-neutral-300 font-sans space-y-4"
         dir="rtl"
-        className="relative w-full min-h-screen bg-[#0a0a0a] text-white font-sans flex flex-col items-center justify-center p-4 overflow-hidden"
       >
-        {/* خلفية الشبكة */}
-        <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #ffffff 1px, transparent 1px),
-              linear-gradient(to bottom, #ffffff 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px",
-          }}
-        />
-
-        {/* توهج برتقالي */}
-        <div className="absolute w-[400px] h-[300px] bg-[#FF6000]/15 blur-[120px] rounded-full pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-
-        <div className="relative z-10 max-w-lg mx-auto text-center space-y-6 flex flex-col items-center">
-          {/* الأيقونة المركزية مع النقاط المتحركة */}
-          <div className="relative my-2">
-            <span className="absolute -top-2 -right-1 w-2.5 h-2.5 rounded-full bg-[#FF6000] animate-[bounce_1s_infinite]" />
-            <div className="w-20 h-20 rounded-full border border-[#FF6000]/40 bg-[#FF6000]/5 backdrop-blur-md flex items-center justify-center text-[#FF6000]">
-              <FileQuestion className="w-10 h-10" />
-            </div>
-            <span className="absolute -bottom-1 -left-2 w-2 h-2 rounded-full bg-amber-400 animate-[bounce_2.5s_infinite_ease-in-out]" />
-          </div>
-
-          {/* النصوص */}
-          <div className="space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-black text-white">
-              المقال غير موجود
-            </h2>
-            <p className="text-neutral-400 text-sm leading-relaxed max-w-sm mx-auto">
-              المقال الذي تبحث عنه غير موجود، تم حذفه، أو تغيّر رابطه. جرّب
-              العودة لصفحة المدونة لتصفح أحدث المقالات.
-            </p>
-          </div>
-
-          {/* الأزرار */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Link
-              to="/Blog"
-              className="flex items-center gap-2 bg-[#FF6000] hover:bg-[#e05400] text-white font-bold px-6 py-3 rounded-full text-sm transition-all duration-300 shadow-lg shadow-[#FF6000]/20 hover:-translate-y-0.5"
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>العودة للمدونة</span>
-            </Link>
-
-            <Link
-              to="/"
-              className="flex items-center gap-2 bg-[#121212] hover:bg-neutral-800 text-white border border-neutral-800 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 hover:-translate-y-0.5"
-            >
-              <Home className="w-4 h-4 text-neutral-400" />
-              <span>الذهاب للرئيسية</span>
-            </Link>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold">المقال غير موجود</h2>
+        <Link
+          to="/Blog"
+          className="inline-block text-[#FF6000] underline font-semibold"
+        >
+          العودة للمدونة
+        </Link>
       </div>
     );
   }
