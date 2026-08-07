@@ -1,7 +1,14 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, ChevronLeft, LayoutGrid, List, ArrowLeft } from "lucide-react";
+import {
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  LayoutGrid,
+  List,
+  ArrowLeft,
+} from "lucide-react";
 
 export default function LightingArticles() {
   const navigate = useNavigate();
@@ -11,10 +18,14 @@ export default function LightingArticles() {
   // حالة التحكم بالعرض: 'grid' أو 'list'
   const [viewMode, setViewMode] = useState("grid");
 
+  // حالة الترقيم
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 6;
+
   async function getProducts() {
     try {
       const { data } = await axios.get("/posts.json");
-      setProducts(data.posts);
+      setProducts(data.posts || []);
     } catch (error) {
       console.log("خطأ في جلب المقالات:", error);
     } finally {
@@ -42,20 +53,27 @@ export default function LightingArticles() {
     );
   }
 
-  // ================= فلترة قسم إضاءة (6 كروت فقط) =================
-  const lightingPosts = products
-    .filter((post) => post.category === "إضاءة")
-    .slice(0, 6);
+  // ================= فلترة قسم إضاءة (كل المقالات) =================
+  const lightingPosts = products.filter((post) => post.category === "إضاءة");
+
+  // حسابات الترقيم
+  const totalPages = Math.ceil(lightingPosts.length / postsPerPage) || 1;
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = lightingPosts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div dir="rtl" className="w-full pt-4 space-y-8 font-sans">
       {/* ================= الهيدر: العنوان وأزرار التبديل ================= */}
       <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-white">قسم الإضاءة</h2>
-          <span className="text-xs bg-[#FF6000]/10 text-[#FF6000] border border-[#FF6000]/20 px-2.5 py-0.5 rounded-full font-medium">
-            {lightingPosts.length} مقالات
-          </span>
+        <div className="text-sm font-semibold text-neutral-300">
+          عرض <strong className="text-white">{lightingPosts.length}</strong>{" "}
+          مقالات في <strong className="text-[#FF6000]">إضاءة</strong>
         </div>
 
         {/* أزرار التبديل */}
@@ -86,10 +104,14 @@ export default function LightingArticles() {
       </div>
 
       {/* ================= عرض المقالات ================= */}
-      {viewMode === "grid" ? (
+      {lightingPosts.length === 0 ? (
+        <div className="text-center py-16 text-neutral-400 bg-[#121212] rounded-2xl border border-neutral-800">
+          لا توجد مقالات مجهزة تحت تصنيف الإضاءة حالياً.
+        </div>
+      ) : viewMode === "grid" ? (
         /* طريقة العرض الشبكية (Grid View) */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {lightingPosts.map((post) => (
+          {currentPosts.map((post) => (
             <div
               key={post.id}
               onClick={() => handleArticleClick(post.id)}
@@ -131,16 +153,19 @@ export default function LightingArticles() {
                   <div className="flex items-center justify-between pt-1">
                     <div className="flex items-center gap-3">
                       <img
-                        src={post.author.avatar}
-                        alt={post.author.name}
+                        src={
+                          post.author?.avatar ||
+                          "https://via.placeholder.com/40"
+                        }
+                        alt={post.author?.name || "المؤلف"}
                         className="w-10 h-10 rounded-full object-cover border border-neutral-700"
                       />
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-white">
-                          {post.author.name}
+                          {post.author?.name || "كاتب مجهول"}
                         </span>
                         <span className="text-xs text-neutral-400">
-                          {post.author.role}
+                          {post.author?.role || "محرر"}
                         </span>
                       </div>
                     </div>
@@ -160,7 +185,7 @@ export default function LightingArticles() {
       ) : (
         /* طريقة عرض القائمة الأفقيّة (List View) */
         <div className="flex flex-col gap-6">
-          {lightingPosts.map((post) => (
+          {currentPosts.map((post) => (
             <div
               key={post.id}
               onClick={() => handleArticleClick(post.id)}
@@ -192,16 +217,18 @@ export default function LightingArticles() {
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-3">
                     <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
+                      src={
+                        post.author?.avatar || "https://via.placeholder.com/40"
+                      }
+                      alt={post.author?.name || "المؤلف"}
                       className="w-10 h-10 rounded-full object-cover border border-neutral-700"
                     />
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-white">
-                        {post.author.name}
+                        {post.author?.name || "كاتب مجهول"}
                       </span>
                       <span className="text-xs text-neutral-400">
-                        {post.author.role}
+                        {post.author?.role || "محرر"}
                       </span>
                     </div>
                   </div>
@@ -222,6 +249,49 @@ export default function LightingArticles() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ================= شريط الترقيم ================= */}
+      {totalPages > 1 && (
+        <div className="flex flex-col items-center justify-center space-y-3 pt-4">
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="w-9 h-9 rounded-xl bg-[#141414] border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-9 h-9 rounded-xl font-bold text-sm flex items-center justify-center transition-all ${
+                    currentPage === page
+                      ? "bg-[#FF6000] text-white shadow-md shadow-[#FF6000]/20"
+                      : "bg-[#141414] border border-neutral-800 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  {page}
+                </button>
+              ),
+            )}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="w-9 h-9 rounded-xl bg-[#141414] border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
+
+          <span className="text-xs text-neutral-500 font-medium">
+            صفحة {currentPage} من {totalPages}
+          </span>
         </div>
       )}
     </div>
