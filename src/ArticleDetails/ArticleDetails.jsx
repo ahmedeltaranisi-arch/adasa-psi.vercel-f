@@ -25,7 +25,7 @@ export default function ArticleDetails() {
 
   async function getArticleData() {
     try {
-      const { data } = await axios.get("/public/posts.json");
+      const { data } = await axios.get("/posts.json");
       const posts = data.posts || [];
       const found = posts.find((item) => String(item.id) === String(id));
       setArticle(found || null);
