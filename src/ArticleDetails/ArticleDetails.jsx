@@ -164,7 +164,7 @@ export default function ArticleDetails() {
       {/* ================= 2. MAIN BODY AREA ================= */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* RIGHT SIDEBAR (محتويات المقال والكروت التابعة له على اليمين مع Sticky) */}
-        <div className="lg:col-span-4 space-y-6 sticky top-6">
+        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6 self-start">
           {/* محتويات المقال */}
           <div className="bg-[#121212] border border-neutral-800/80 rounded-3xl p-6 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
