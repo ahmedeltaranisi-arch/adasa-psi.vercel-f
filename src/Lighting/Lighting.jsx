@@ -8,6 +8,7 @@ import {
   LayoutGrid,
   List,
   ArrowLeft,
+  X,
 } from "lucide-react";
 
 export default function LightingArticles() {
@@ -40,6 +41,11 @@ export default function LightingArticles() {
   // دالة الانتقال لصفحة تفاصيل المقال باستعمال الـ id
   const handleArticleClick = (id) => {
     navigate(`/Blog/${id}`);
+  };
+
+  // دالة مسح الفلتر والانتقال إلى صفحة جميع المقالات
+  const handleClearFilter = () => {
+    navigate("/Blog");
   };
 
   if (loading) {
@@ -76,30 +82,41 @@ export default function LightingArticles() {
           مقالات في <strong className="text-[#FF6000]">إضاءة</strong>
         </div>
 
-        {/* أزرار التبديل */}
-        <div className="flex items-center gap-1 bg-[#141414] p-1 rounded-xl border border-neutral-800">
+        <div className="flex items-center gap-3">
+          {/* زر مسح الفلاتر */}
           <button
-            onClick={() => setViewMode("grid")}
-            aria-label="عرض شبكي"
-            className={`p-2 rounded-lg transition-all ${
-              viewMode === "grid"
-                ? "bg-[#FF6000] text-white"
-                : "text-neutral-400 hover:text-white"
-            }`}
+            onClick={handleClearFilter}
+            className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white transition-colors"
           >
-            <LayoutGrid className="w-4 h-4" />
+            <X className="w-4 h-4" />
+            <span>مسح الفلاتر</span>
           </button>
-          <button
-            onClick={() => setViewMode("list")}
-            aria-label="عرض قائمة"
-            className={`p-2 rounded-lg transition-all ${
-              viewMode === "list"
-                ? "bg-[#FF6000] text-white"
-                : "text-neutral-400 hover:text-white"
-            }`}
-          >
-            <List className="w-4 h-4" />
-          </button>
+
+          {/* أزرار التبديل */}
+          <div className="flex items-center gap-1 bg-[#141414] p-1 rounded-xl border border-neutral-800">
+            <button
+              onClick={() => setViewMode("grid")}
+              aria-label="عرض شبكي"
+              className={`p-2 rounded-lg transition-all ${
+                viewMode === "grid"
+                  ? "bg-[#FF6000] text-white"
+                  : "text-neutral-400 hover:text-white"
+              }`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              aria-label="عرض قائمة"
+              className={`p-2 rounded-lg transition-all ${
+                viewMode === "list"
+                  ? "bg-[#FF6000] text-white"
+                  : "text-neutral-400 hover:text-white"
+              }`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
